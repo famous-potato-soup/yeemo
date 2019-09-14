@@ -1,0 +1,12 @@
+{
+    "id": "uuid",
+    "owner": "player_id",
+    "position": {
+        "lat": 3.3,
+        "lon": 10
+    },
+    "action": {
+        "power": 33,
+        "degree": 90
+    }
+}

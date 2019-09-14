@@ -1,0 +1,56 @@
+// game room
+{
+    "id": "uuid_strings", // uuid string, same as unique url
+    "status": "started", // enum value, [waiting, started, done]
+    "mode": { // judge win or loose, judging in backend
+        "id": 1,
+        "size": 2, // for player limit
+        "name": "classic push stone - 1vs 1",
+        "isTurn": true, // turn base, e.g. my turn -> your turn -> my turn, false mean is realtime 
+        "turnLimit": 3000, // turn limit time, 0 is unlimit
+        "actionDuration": 500, // time limit for after action
+        "moveLimit": 0, // move limit per game, 0 is unlimit
+    },
+    "user": {
+        "player": [
+            <player>, // has level, ability, game history(win, loose)
+            {
+                "id": "uuid",
+                "name": "nameeee",
+                "won": 33,
+                "loose": 67,
+                "weight": 1, // play order, highest weight move first
+                "stones":[
+                    {
+                        "id": "uuid",
+                        "position": {
+                            "lat": 3.3,
+                            "lon": 3.3
+                        }
+                    }
+                ]
+            }
+        ],
+        "observer": [
+            <user>,
+            {
+                "id": "uuid",
+                "name": "nameeee",
+                "won": 33,
+                "loose": 67
+            }
+        ]
+    },
+    "tile": {
+        "width": 1000,
+        "height": 1000
+    }
+    // events(push, crush), join, leave.... per game room
+    "history": [
+        <event>,
+        {
+            "type": "join_room", // define event types
+            "actor": "<player_id>"
+        }
+    ]
+}
