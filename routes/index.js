@@ -1,14 +1,21 @@
-const express = require('express')
-const router = express.Router()
+var express = require('express');
+var router = express.Router();
+var { generateToken, sendToken } = require('../utils/token.utils');
+var passport = require('passport');
+var config = require('../config');
+var request = require('request');
+require('../passport')();
 
-/* GET home page. */
-router.get('/', (req, res, next) => {
-  res.send('hello world')
-})
+router.route('/auth/facebook')
+    .post(passport.authenticate('facebook-token', {session: false}), function(req, res, next) {
+        if (!req.user) {
+            return res.send(401, 'User Not Authenticated');
+        }
+        req.auth = {
+            id: req.user.id
+        };
 
-router.get('socket', () => {
-  
-})
+        next();
+    }, generateToken, sendToken);
 
-
-export default router
+module.exports = router;
