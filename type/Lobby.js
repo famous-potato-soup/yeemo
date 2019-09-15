@@ -2,11 +2,14 @@ class Lobby {
     constructor (lobby) {
         this.preparedRooms = []
         this.rooms = []
-        this.users = []
+        this.users = {}
     }
 
     get Users () {
         return this.users
+    }
+    get UserArray () {
+        return Object.values(this.users)
     }
 
     get Rooms () {
@@ -31,6 +34,11 @@ class Lobby {
     RoomRemove (room) {
         this.rooms.filter(e => {
             return e !== room
+        })
+    }
+    FindRoom (roomid) {
+        return this.rooms.find(e => {
+            return e.id === roomid
         })
     }
 }

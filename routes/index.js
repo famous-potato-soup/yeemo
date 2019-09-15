@@ -10,5 +10,4 @@ router.get('socket', () => {
   
 })
 
-
 export default router
