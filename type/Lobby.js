@@ -1,5 +1,11 @@
+
+const Room = require('./Room')
+const GameRoomDef = require('./Definitions/GameRoomDef')
+
 class Lobby {
-    constructor (lobby) {
+    constructor (options) {
+        this.socketio = options.socketio
+
         this.preparedRooms = []
         this.rooms = []
         this.users = {}
@@ -20,6 +26,18 @@ class Lobby {
         return this.preparedRooms
     }
 
+    UserConnect (socket) {
+        console.log('some one connect')
+        socket.emit('hello', {hello: 'world'})
+
+        socket.on('userLogin', (data) => {
+            //fb auth need
+        })
+        socket.on('gameStart', (data) => {
+            let roomtype = data.type || 'default type'
+        })
+    }
+
     AddPreparedRoom (room) {
         this.preparedRooms.push(room)
     }
@@ -36,6 +54,20 @@ class Lobby {
             return e !== room
         })
     }
+
+    FindPlaybleRoom (type) {
+        const roomlist = this.rooms.filter(e=> {
+            return e.Type === type && e.Status === GameRoomDef.RoomStatus.waiting
+        })
+
+        if(roomlist.length === 0) {
+            return new Room({
+                gamerule: GameRoomDef.BaseGameRule,
+                roomType: type,
+            })
+        }
+    }
+
     FindRoom (roomid) {
         return this.rooms.find(e => {
             return e.id === roomid
@@ -43,4 +75,4 @@ class Lobby {
     }
 }
 
-export default Lobby
+module.exports = Lobby
