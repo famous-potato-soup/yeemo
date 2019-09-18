@@ -2,6 +2,10 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
+mongoose.set('useNewUrlParser', true);
+
 
 module.exports = function () {
 
@@ -23,7 +27,6 @@ module.exports = function () {
     });
 
     UserSchema.set('toJSON', {getters: true, virtuals: true});
-
 
     UserSchema.statics.upsertFbUser = function(accessToken, refreshToken, profile, cb) {
         var that = this;
