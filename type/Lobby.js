@@ -32,9 +32,14 @@ class Lobby {
 
         socket.on('userLogin', (data) => {
             //fb auth need
-        })
-        socket.on('gameStart', (data) => {
-            let roomtype = data.type || 'default type'
+            socket.on('gameStart', (data) => {
+                let roomtype = data.type || 'default type'
+                let room = this.FindPlaybleRoom(roomtype)
+                socket.emit('room', {
+                    id: room.Id,
+                    status: room.Status
+                })
+            })
         })
     }
 
@@ -65,6 +70,8 @@ class Lobby {
                 gamerule: GameRoomDef.BaseGameRule,
                 roomType: type,
             })
+        } else {
+
         }
     }
 

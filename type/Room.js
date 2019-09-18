@@ -42,18 +42,39 @@ class Room {
     AddUser (user, socketid) {
         this.userList[socketid] = user
     }
+    RemoveUser (socketid) {
+        this.userList[socketid] = undefined
+    }
 
     onConnection(socket) {
         socket.on('cert', (data) => {
             const userdata = lobby.getUserData(data.id)
             
             socket.on('ready', (data) => {
+                userdata.isReady = true
+                if(this.UserArray.filter(e => {
+                    return e.isReady
+                }) === this.UserLength){
+                    this.status = RoomStatus.playing
+                }
+
+                this.UserArray.forEach(e => {
+                    e.stones = []
+                    e.stones.push({
+                        x: 10,
+                        y: 10
+                    })
+                    socket.emit('gameStart', {})
+                    setTimeout(() => {
+                        socket.emit('canShoot', {})
+                    }, GameRoomDef.BaseGameRule.TIME_FOR_TURN)
+                })
             })
             socket.on('leave', (data) => {
-                socketnamespace.broadcast('moveEnd', userdata)
+                socketnamespace.broadcast('quit', userdata)
             })
             socket.on('moveEnd', (data) => {
-                socketnamespace.broadcast('quit', userdata)
+                socketnamespace.broadcast('moveEnd', userdata)
             })
             socket.on('shoot', (data) => {
                 socketnamespace.broadcast('shoot', data)
@@ -62,10 +83,16 @@ class Room {
                 }, GameRoomDef.BaseGameRule.TIME_FOR_TURN)
             })
             socket.on('exit', (data) => {
-
+                if(this.status !== RoomStatus.playing){
+                    this.RemoveUser(socket.id)
+                }
             })
-            socket.on('disconnect', (data) => {
-                userdata.isDisconnected = true
+            socket.on('disconnect', () => {
+                if(this.status === RoomStatus.playing){
+                    userdata.isDisconnected = true
+                } else {
+                    this.RemoveUser(socket.id)
+                }
             })
 
             this.AddUser({
@@ -73,15 +100,6 @@ class Room {
                 socket: socket
             }, socket.id)
         })
-    }
-    onLeave (data) {
-
-    }
-    onShoot (data) {
-
-    }
-    onDisconnect (data) {
-        
     }
 }
 
