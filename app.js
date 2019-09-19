@@ -2,25 +2,31 @@ const express = require('express')
 const app = express();
 
 const http = require('http')
-const server = http.createServer(app)
+const server = http.Server(app)
 
 const socketio = require('socket.io')
 const io = socketio(server)
 
 const cors = require('cors')
 const Lobby = require('./type/Lobby')
+var corsOption = {
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    exposedHeaders: ['x-auth-token']
+};
 
-app.use(cors)
+app.use(cors(corsOption));
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+})
+
 
 const lobby = new Lobby({
   socket: io
-})
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
 })
 
 // catch 404 and forward to error handler
@@ -36,9 +42,10 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500)
-  res.render('error')
+  res.send('error')
 })
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+server.listen(3001, () => {
+        console.log('server open without error')
 })
+

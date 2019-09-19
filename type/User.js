@@ -20,6 +20,10 @@ class User {
     set isReady (isready) {
         this.isready = isready
     }
+
+    RefreshStoneState (movedata) {
+        //TODO movedata not defined
+    }
 }
 
 module.exports = User

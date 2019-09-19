@@ -1,5 +1,5 @@
 const BaseGameRule = {
-    MAX_PLAYER: 20,
+    MAX_PLAYER: 2,
     TIME_FOR_TURN: 3000,
 }
 
@@ -9,7 +9,11 @@ const RoomStatus = {
     done: 'done'
 }
 
-export default {
-    BaseGameRule,
+module.exports =  {
+    GameRule:{
+        basetype: BaseGameRule,
+        chamgyrm: BaseGameRule,
+        zerogravity: BaseGameRule,
+    },
     RoomStatus
 }

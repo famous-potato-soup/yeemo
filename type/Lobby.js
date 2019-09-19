@@ -4,11 +4,15 @@ const GameRoomDef = require('./Definitions/GameRoomDef')
 
 class Lobby {
     constructor (options) {
-        this.socketio = options.socketio
+        this.socketio = options.socket
 
         this.preparedRooms = []
         this.rooms = []
         this.users = {}
+
+        this.socketio.on('connection', (socket) => {
+            this.UserConnect(socket)
+        })
     }
 
     get Users () {
@@ -28,18 +32,29 @@ class Lobby {
 
     UserConnect (socket) {
         console.log('some one connect')
+        console.log(socket.id)
         socket.emit('hello', {hello: 'world'})
 
         socket.on('userLogin', (data) => {
+            socket.emit('userLogin', {user: 'login'})
+            this.users[socket.id] = {
+                socket: socket,
+                userData: data,
+            }
             //fb auth need
             socket.on('gameStart', (data) => {
-                let roomtype = data.type || 'default type'
+                let roomtype = (data ? data.type : 'basetype') || 'basetype'
                 let room = this.FindPlaybleRoom(roomtype)
                 socket.emit('room', {
                     id: room.Id,
                     status: room.Status
                 })
             })
+        })
+        socket.on('disconnect', () => {
+            if(this.users[socket.id] !== undefined){
+                this.users[socket.id] = undefined
+            }
         })
     }
 
@@ -48,6 +63,8 @@ class Lobby {
     }
     
     SetRoomWorking (room) {
+        console.log('room is no more empty')
+
         this.preparedRooms.filter(e => {
             return e !== room
         })
@@ -55,6 +72,9 @@ class Lobby {
     }
 
     RoomRemove (room) {
+        this.preparedRooms.filter(e => {
+            return e !== room
+        })
         this.rooms.filter(e => {
             return e !== room
         })
@@ -66,13 +86,28 @@ class Lobby {
         })
 
         if(roomlist.length === 0) {
-            return new Room({
-                gamerule: GameRoomDef.BaseGameRule,
-                roomType: type,
-            })
+            let roomid = 'fortesting' //TODO randomstring
+            const room = new Room({
+                    Id: roomid,
+                    gamerule: GameRoomDef.BaseGameRule,
+                    roomType: type,
+                },
+                this.socketio.of(roomid),
+                {
+                    getUserData: (key) => { return this.FindUserByKey(key) },
+                    roomDestroy: (room) => { this.RoomRemove(room) },
+                    setRoomWorking: (room) => { this.SetRoomWorking(room) },
+                }
+            )
+            this.preparedRooms.push(room)
+            return room
         } else {
-
+            return roomlist[0]
         }
+    }
+    FindUserByKey (key) {
+        console.log(this);
+        return this.users[key].userData
     }
 
     FindRoom (roomid) {
