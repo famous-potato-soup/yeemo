@@ -106,8 +106,7 @@ class Lobby {
         }
     }
     FindUserByKey (key) {
-        console.log(this);
-        return this.users[key].userData
+        return this.users[key]? this.users[key].userData : undefined
     }
 
     FindRoom (roomid) {
