@@ -6,10 +6,13 @@ const server = http.Server(app)
 
 const socketio = require('socket.io')
 const io = socketio(server)
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
+const indexRouter = require('./routes/index');
 const cors = require('cors')
 const Lobby = require('./type/Lobby')
-var corsOption = {
+const corsOption = {
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
@@ -18,8 +21,14 @@ var corsOption = {
 
 app.use(cors(corsOption));
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use('/', indexRouter);
 app.get('/', (req, res) => {
   res.send('Hello World!');
 })
