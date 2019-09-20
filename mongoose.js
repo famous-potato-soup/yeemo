@@ -25,6 +25,7 @@ module.exports = function () {
             select: false
         }
     });
+    console.log("checkpoint")
 
     UserSchema.set('toJSON', {getters: true, virtuals: true});
 
