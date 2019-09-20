@@ -81,15 +81,12 @@ class Room {
                 })
                 this.status = RoomStatus.done
             }
-            setTimeout(() => {
-                socket.emit('canShoot', {})
-            }, this.rule.TIME_FOR_TURN)
+//            setTimeout(() => {
+//                socket.emit('canShoot', {})
+//            }, this.rule.TIME_FOR_TURN)
         })
         socket.on('shoot', (data) => {
             this.socketnamespace.emit('shoot', data)
-            setTimeout(() => {
-                socket.emit('canShoot', {})
-            }, this.rule.TIME_FOR_TURN)
         })
         socket.on('exit', (data) => {
             if(this.status !== RoomStatus.playing){
