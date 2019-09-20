@@ -45,7 +45,8 @@ app.use(function(err, req, res, next) {
   res.send('error')
 })
 
-server.listen(3001, () => {
-        console.log('server open without error')
+const port = 3001;
+server.listen(port, () => {
+    console.log(`${port} is running`)
 })
 

@@ -47,7 +47,7 @@ class Room {
         this.userList[socketid] = user
     }
     RemoveUser (socketid) {
-        this.userList[socketid] = undefined
+        delete this.userList[socketid];
         if(this.UserLength === 0 ) {
             this.lobby.RoomRemove(this)
         }
